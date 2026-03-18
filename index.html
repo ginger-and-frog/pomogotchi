@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PomoPet 🌱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- PIXEL SCANLINE OVERLAY -->
+  <div class="scanlines"></div>
+  <div class="crt-edge"></div>
+
+  <!-- ===================== AUTH SCREEN ===================== -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-container">
+      <div class="logo-block">
+        <div class="logo-pixel">🌱</div>
+        <h1 class="logo-title">POMOPET</h1>
+        <p class="logo-sub">FOCUS. GROW. REPEAT.</p>
+      </div>
+      <div class="auth-card pixel-card">
+        <div class="auth-tabs">
+          <button class="tab-btn active" onclick="switchTab('login')">LOGIN</button>
+          <button class="tab-btn" onclick="switchTab('register')">NEW GAME</button>
+        </div>
+        <div id="tab-login" class="tab-content active">
+          <div class="field-group">
+            <label class="pixel-label">EMAIL</label>
+            <input type="email" id="login-email" class="pixel-input" placeholder="trainer@email.com"/>
+          </div>
+          <div class="field-group">
+            <label class="pixel-label">PASSWORD</label>
+            <input type="password" id="login-password" class="pixel-input" placeholder="••••••••"/>
+          </div>
+          <button class="pixel-btn primary" onclick="handleLogin()">▶ START</button>
+          <p class="auth-error" id="login-error"></p>
+        </div>
+        <div id="tab-register" class="tab-content">
+          <div class="field-group">
+            <label class="pixel-label">TRAINER NAME</label>
+            <input type="text" id="reg-name" class="pixel-input" placeholder="ASH KETCHUM"/>
+          </div>
+          <div class="field-group">
+            <label class="pixel-label">EMAIL</label>
+            <input type="email" id="reg-email" class="pixel-input" placeholder="trainer@email.com"/>
+          </div>
+          <div class="field-group">
+            <label class="pixel-label">PASSWORD</label>
+            <input type="password" id="reg-password" class="pixel-input" placeholder="min 6 chars"/>
+          </div>
+          <button class="pixel-btn primary" onclick="handleRegister()">▶ CREATE SAVE</button>
+          <p class="auth-error" id="reg-error"></p>
+        </div>
+      </div>
+      <p class="guest-link" onclick="guestMode()">[ PLAY AS GUEST — no save ]</p>
+    </div>
+  </div>
+
+  <!-- ===================== SETUP SCREEN ===================== -->
+  <div id="screen-setup" class="screen">
+    <div class="setup-container">
+      <h2 class="screen-title">⚙ SESSION SETUP</h2>
+      <div class="pixel-card setup-card">
+
+        <div class="setup-section">
+          <h3 class="section-title">⏱ TIME SLOTS</h3>
+          <div class="time-row">
+            <div class="field-group small">
+              <label class="pixel-label">FOCUS (min)</label>
+              <input type="number" id="focus-time" class="pixel-input small" value="25" min="1" max="120"/>
+            </div>
+            <div class="field-group small">
+              <label class="pixel-label">BREAK (min)</label>
+              <input type="number" id="break-time" class="pixel-input small" value="5" min="1" max="60"/>
+            </div>
+            <div class="field-group small">
+              <label class="pixel-label">TOTAL (min)</label>
+              <input type="number" id="total-time" class="pixel-input small" value="120" min="1" max="480"/>
+            </div>
+          </div>
+          <div class="checkbox-row">
+            <label class="pixel-checkbox-label">
+              <input type="checkbox" id="show-overall" checked/>
+              <span class="checkbox-custom"></span>
+              SHOW OVERALL TIMER
+            </label>
+          </div>
+        </div>
+
+        <div class="setup-section">
+          <h3 class="section-title">📋 TASK ASSIGNMENT</h3>
+          <div id="slot-task-assignment">
+            <!-- dynamically generated -->
+          </div>
+          <button class="pixel-btn small secondary" onclick="generateSlots()">↺ RECALCULATE SLOTS</button>
+        </div>
+
+        <div class="setup-section">
+          <h3 class="section-title">🌱 CHOOSE YOUR PET</h3>
+          <div class="pet-choice-row" id="pet-choice-area">
+            <div class="pet-option pixel-card selectable" data-pet="plant" onclick="selectPet('plant')">
+              <div class="pet-emoji">🌱</div>
+              <div class="pet-name">SPROUT</div>
+              <div class="pet-desc">A tiny plant<br>ready to grow</div>
+            </div>
+            <div class="pet-option pixel-card selectable" data-pet="fish" onclick="selectPet('fish')">
+              <div class="pet-emoji">🐠</div>
+              <div class="pet-name">BUBBLES</div>
+              <div class="pet-desc">A fish tank<br>full of dreams</div>
+            </div>
+          </div>
+          <div id="pet-name-section" class="hidden">
+            <div class="field-group">
+              <label class="pixel-label">NAME YOUR PET</label>
+              <input type="text" id="pet-name-input" class="pixel-input" placeholder="e.g. LEAFY, NEMO..."/>
+            </div>
+          </div>
+        </div>
+
+        <button class="pixel-btn primary large" onclick="startSession()">▶▶ BEGIN SESSION</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN SCREEN ===================== -->
+  <div id="screen-main" class="screen">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="top-left">
+        <span class="trainer-name" id="display-trainer-name">TRAINER</span>
+      </div>
+      <div class="top-center">
+        <span class="app-title-small">POMOPET</span>
+      </div>
+      <div class="top-right">
+        <button class="icon-btn" onclick="openTodoOverlay()" title="To-Do List">📋</button>
+        <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
+        <button class="icon-btn" onclick="handleLogout()" title="Logout">⏏</button>
+      </div>
+    </div>
+
+    <div class="main-layout">
+
+      <!-- LEFT: TIMERS -->
+      <div class="timer-panel pixel-card">
+        <div class="slot-badge" id="slot-badge">SLOT 1 / 4</div>
+        <div class="timer-label" id="timer-mode-label">FOCUS</div>
+        <div class="timer-display" id="main-timer">25:00</div>
+        <div class="timer-bar-wrap">
+          <div class="timer-bar" id="timer-bar"></div>
+        </div>
+        <div id="overall-timer-row" class="overall-row">
+          <span class="overall-label">OVERALL</span>
+          <span class="overall-time" id="overall-timer">2:00:00</span>
+        </div>
+        <div class="timer-controls">
+          <button class="pixel-btn secondary" id="btn-pause-resume" onclick="togglePause()">⏸ PAUSE</button>
+          <button class="pixel-btn danger" onclick="confirmStop()">⏹ STOP</button>
+        </div>
+        <div class="slot-tasks-panel">
+          <div class="slot-tasks-title">CURRENT SLOT TASKS</div>
+          <ul class="slot-task-list" id="current-slot-tasks"></ul>
+        </div>
+      </div>
+
+      <!-- CENTER: TAMAGOTCHI -->
+      <div class="tama-panel pixel-card">
+        <div class="tama-name" id="tama-name-display">LEAFY</div>
+        <div class="tama-screen">
+          <div class="tama-pet-display" id="tama-display">
+            <div class="tama-sprite" id="tama-sprite">🌱</div>
+            <div class="tama-aura" id="tama-aura"></div>
+          </div>
+          <div class="tama-growth-bar-wrap">
+            <div class="tama-growth-label">GROWTH</div>
+            <div class="tama-growth-bar">
+              <div class="tama-growth-fill" id="tama-growth-fill" style="width:0%"></div>
+            </div>
+            <div class="tama-growth-pct" id="tama-growth-pct">0%</div>
+          </div>
+        </div>
+        <div class="tama-status" id="tama-status">GROWING...</div>
+        <div class="saved-pets-row" id="saved-pets-row">
+          <!-- saved grown pets appear here -->
+        </div>
+      </div>
+
+      <!-- RIGHT: SLOT OVERVIEW -->
+      <div class="slots-panel pixel-card">
+        <div class="slots-title">SESSION SLOTS</div>
+        <div id="slots-overview-list" class="slots-list">
+          <!-- dynamically rendered -->
+        </div>
+        <div class="skipped-box" id="skipped-box">
+          <div class="skipped-title">⚠ SKIPPED</div>
+          <ul id="skipped-list"></ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BUY ME A COFFEE -->
+    <a href="https://www.buymeacoffee.com" target="_blank" class="coffee-btn pixel-btn secondary small">☕ BUY ME A COFFEE</a>
+  </div>
+
+  <!-- ===================== TODO PAGE ===================== -->
+  <div id="screen-todo" class="screen">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="goBack()" title="Back">◀ BACK</button>
+      <span class="app-title-small">📋 TASK BOARD</span>
+      <button class="pixel-btn small primary" onclick="openAddTask()">+ ADD</button>
+    </div>
+    <div class="todo-container">
+      <div class="todo-controls pixel-card">
+        <div class="sort-row">
+          <span class="pixel-label small">SORT:</span>
+          <button class="pixel-btn tiny" onclick="sortTodo('status')">STATUS</button>
+          <button class="pixel-btn tiny" onclick="sortTodo('due')">DUE DATE</button>
+          <button class="pixel-btn tiny" onclick="sortTodo('priority')">PRIORITY</button>
+        </div>
+        <div class="filter-row">
+          <span class="pixel-label small">FILTER:</span>
+          <button class="pixel-btn tiny active-filter" onclick="filterTodo('all')" id="filter-all">ALL</button>
+          <button class="pixel-btn tiny" onclick="filterTodo('not-started')" id="filter-not-started">NEW</button>
+          <button class="pixel-btn tiny" onclick="filterTodo('in-progress')" id="filter-in-progress">ACTIVE</button>
+          <button class="pixel-btn tiny" onclick="filterTodo('complete')" id="filter-complete">DONE</button>
+          <button class="pixel-btn tiny" onclick="filterTodo('skipped')" id="filter-skipped">SKIPPED</button>
+        </div>
+        <button class="pixel-btn secondary small" onclick="moveSelectedToMain()">▶ MOVE TO SESSION</button>
+      </div>
+      <div id="todo-list-container" class="todo-list-container">
+        <!-- tasks rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODALS ===================== -->
+
+  <!-- Add Task Modal -->
+  <div id="modal-add-task" class="modal-overlay hidden">
+    <div class="modal-box pixel-card">
+      <h3 class="modal-title">+ NEW TASK</h3>
+      <div class="field-group">
+        <label class="pixel-label">TASK NAME</label>
+        <input type="text" id="task-name-input" class="pixel-input" placeholder="Finish that essay..."/>
+      </div>
+      <div class="time-row">
+        <div class="field-group small">
+          <label class="pixel-label">DUE DATE</label>
+          <input type="date" id="task-due-input" class="pixel-input small"/>
+        </div>
+        <div class="field-group small">
+          <label class="pixel-label">PRIORITY</label>
+          <select id="task-priority-input" class="pixel-input small">
+            <option value="high">🔴 HIGH</option>
+            <option value="medium" selected>🟡 MEDIUM</option>
+            <option value="low">🟢 LOW</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="pixel-btn primary" onclick="saveTask()">SAVE</button>
+        <button class="pixel-btn secondary" onclick="closeModal('modal-add-task')">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incomplete Task Modal -->
+  <div id="modal-incomplete-task" class="modal-overlay hidden">
+    <div class="modal-box pixel-card">
+      <h3 class="modal-title">⚠ SLOT ENDED!</h3>
+      <p class="modal-msg" id="incomplete-task-msg">Task not complete. What do?</p>
+      <div id="incomplete-task-options" class="modal-btns col">
+        <!-- dynamically generated shift options -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="modal-settings" class="modal-overlay hidden">
+    <div class="modal-box pixel-card">
+      <h3 class="modal-title">⚙ SETTINGS</h3>
+      <div class="field-group">
+        <label class="pixel-label">BACKGROUND</label>
+        <div class="bg-colour-row" id="bg-colour-row">
+          <div class="bg-swatch" data-colour="#0f1a0f" style="background:#0f1a0f" onclick="setBg('#0f1a0f')" title="Forest Night"></div>
+          <div class="bg-swatch" data-colour="#1a0f2e" style="background:#1a0f2e" onclick="setBg('#1a0f2e')" title="Deep Space"></div>
+          <div class="bg-swatch" data-colour="#1a1200" style="background:#1a1200" onclick="setBg('#1a1200')" title="Amber Glow"></div>
+          <div class="bg-swatch" data-colour="#0d1a1a" style="background:#0d1a1a" onclick="setBg('#0d1a1a')" title="Ocean Deep"></div>
+          <div class="bg-swatch" data-colour="#1a0a0a" style="background:#1a0a0a" onclick="setBg('#1a0a0a')" title="Red Alert"></div>
+          <div class="bg-swatch active-swatch" data-colour="#0a0a0a" style="background:#0a0a0a" onclick="setBg('#0a0a0a')" title="Classic Black"></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="pixel-label">REARRANGE PETS</label>
+        <p class="hint-text">Drag pets on main screen to rearrange.</p>
+      </div>
+      <button class="pixel-btn secondary" onclick="closeModal('modal-settings')">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <!-- Todo Overlay (during session) -->
+  <div id="todo-overlay" class="modal-overlay hidden">
+    <div class="modal-box pixel-card wide">
+      <h3 class="modal-title">📋 TASKS (SESSION ACTIVE)</h3>
+      <p class="hint-text">Select tasks to add to session:</p>
+      <div id="todo-overlay-list" class="todo-overlay-list"></div>
+      <div class="modal-btns">
+        <button class="pixel-btn primary" onclick="addOverlayTasksToSession()">▶ ADD TO SESSION</button>
+        <button class="pixel-btn secondary" onclick="closeModal('todo-overlay')">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
