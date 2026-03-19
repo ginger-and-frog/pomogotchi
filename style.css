@@ -194,7 +194,7 @@ select.y2k-input option { background: white; }
 .logo-inner  { text-align: center; padding: 20px 16px 16px; }
 .logo-emoji  { font-size: 40px; display: block; margin-bottom: 8px; animation: bobble 2s ease-in-out infinite; }
 @keyframes bobble { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-6px) rotate(3deg)} }
-.logo-title  { font-family: var(--font-pixel); font-size: 16px; background: var(--win-title); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; margin-bottom: 4px; }
+.logo-title  { font-family: var(--font-pixel); font-size: 16px; background: var(--win-title); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; margin-bottom: 4px; }
 .logo-sub    { font-size: 10px; color: var(--text-mid); font-weight: 700; letter-spacing: 1px; }
 
 .auth-tabs   { display: flex; border-bottom: 2px solid var(--purple-light); margin-bottom: 14px; }
@@ -254,7 +254,7 @@ select.y2k-input option { background: white; }
   flex-shrink: 0; gap: 8px;
 }
 .taskbar-left, .taskbar-right { display: flex; align-items: center; gap: 6px; }
-.taskbar-center { font-family: var(--font-pixel); font-size: 9px; background: var(--win-title); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.taskbar-center { font-family: var(--font-pixel); font-size: 9px; background: var(--win-title); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .trainer-chip { font-size: 10px; font-weight: 800; color: var(--purple-deep); background: var(--purple-light); padding: 3px 10px; border-radius: 20px; border: 1.5px solid var(--purple); }
 .taskbar-icon-btn { background: white; border: 1.5px solid var(--purple-light); border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 14px; transition: all 0.1s; }
 .taskbar-icon-btn:hover { border-color: var(--purple); transform: scale(1.1); }
@@ -275,13 +275,13 @@ select.y2k-input option { background: white; }
 .phase-label { text-align: center; font-family: var(--font-pixel); font-size: 7px; color: var(--text-mid); letter-spacing: 1px; }
 .timer-display {
   text-align: center; font-family: var(--font-pixel); font-size: 30px;
-  background: var(--win-title); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background: var(--win-title); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   letter-spacing: 2px; filter: drop-shadow(0 2px 8px rgba(155,127,232,0.4));
   animation: timerPulse 1s ease-in-out infinite;
 }
 @keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:0.8} }
 .timer-display.paused { animation: none; opacity: 0.4; }
-.timer-display.break-mode { background: linear-gradient(90deg, var(--mint-deep), var(--blue-deep)); -webkit-background-clip: text; }
+.timer-display.break-mode { background: linear-gradient(90deg, var(--mint-deep), var(--blue-deep)); -webkit-background-clip: text; background-clip: text; }
 
 .progress-wrap { height: 8px; background: var(--purple-light); border-radius: 4px; border: 1.5px solid var(--purple); overflow: hidden; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple-deep), var(--pink-deep)); border-radius: 3px; transition: width 1s linear; }
@@ -311,7 +311,7 @@ select.y2k-input option { background: white; }
 .tank-win { display: flex; flex-direction: column; overflow: hidden; }
 .tank-win .win-body { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; overflow: hidden; padding: 10px; }
 
-.tank-name { font-family: var(--font-pixel); font-size: 9px; background: var(--win-title); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.tank-name { font-family: var(--font-pixel); font-size: 9px; background: var(--win-title); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
 /* THE FISH TANK */
 .fish-tank {
