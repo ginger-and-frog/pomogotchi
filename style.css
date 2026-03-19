@@ -49,15 +49,11 @@
 
 html, body {
   width: 100%; height: 100%;
-  background: var(--win-bg);
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(255,179,217,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(168,216,255,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(201,179,255,0.2) 0%, transparent 60%);
+  background: #f2dede;
   font-family: var(--font-main);
   color: var(--text-dark);
   overflow: hidden;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpolygon points='0,0 0,16 4,12 7,18 9,17 6,11 11,11' fill='white' stroke='%239b7fe8' stroke-width='1.5'/%3E%3C/svg%3E") 0 0, auto;
+  cursor: url('assets/cursor.png') 0 0, auto;
 }
 
 /* Sparkles on bg */
@@ -189,11 +185,7 @@ select.y2k-input option { background: white; }
 
 /* ===================== AUTH SCREEN ===================== */
 #screen-auth {
-  background:
-    radial-gradient(circle at 25% 25%, rgba(255,179,217,0.5) 0%, transparent 45%),
-    radial-gradient(circle at 75% 75%, rgba(168,216,255,0.5) 0%, transparent 45%),
-    radial-gradient(circle at 50% 10%, rgba(201,179,255,0.4) 0%, transparent 40%),
-    #c8d8ff;
+  background: #f2dede;
 }
 
 .auth-wrapper { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; max-width: 360px; padding: 20px; }
@@ -218,10 +210,7 @@ select.y2k-input option { background: white; }
 
 /* ===================== SETUP SCREEN ===================== */
 #screen-setup {
-  background:
-    radial-gradient(circle at 30% 70%, rgba(255,212,179,0.4) 0%, transparent 40%),
-    radial-gradient(circle at 70% 30%, rgba(179,240,224,0.4) 0%, transparent 40%),
-    #c8d8ff;
+  background: #f2dede;
   overflow-y: auto;
   align-items: flex-start;
 }
@@ -252,9 +241,7 @@ select.y2k-input option { background: white; }
 .task-chip.overall  { background: var(--mint); border-color: var(--mint-deep); }
 
 /* ===================== MAIN SCREEN ===================== */
-#screen-main { align-items: stretch; justify-content: stretch; background: #c8d8ff;
-  background-image: radial-gradient(circle at 20% 80%, rgba(255,179,217,0.35) 0%, transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(179,240,224,0.35) 0%, transparent 40%); }
+#screen-main { align-items: stretch; justify-content: stretch; background: #f2dede; }
 #screen-main.active { display: flex; flex-direction: column; }
 
 /* Taskbar */
@@ -478,7 +465,7 @@ select.y2k-input option { background: white; }
 .skipped-list li { font-size: 10px; font-weight: 700; color: #e87f7f; }
 
 /* ===================== TODO PAGE ===================== */
-#screen-todo { background: #c8d8ff; flex-direction: column; align-items: stretch; justify-content: flex-start; overflow: hidden; }
+#screen-todo { background: #f2dede; flex-direction: column; align-items: stretch; justify-content: flex-start; overflow: hidden; }
 #screen-todo.active { display: flex; }
 .todo-topbar { background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(201,179,255,0.4)); backdrop-filter: blur(8px); border-bottom: 2px solid var(--purple-light); padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
 .todo-title { font-family: var(--font-pixel); font-size: 9px; color: var(--purple-deep); }
@@ -516,7 +503,7 @@ select.y2k-input option { background: white; }
 /* ===================== MODALS ===================== */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
-  background: rgba(184,200,255,0.5); backdrop-filter: blur(6px);
+  background: rgba(242,222,222,0.6); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.hidden { display: none; }
@@ -527,18 +514,38 @@ select.y2k-input option { background: white; }
 .modal-btns { display: flex; gap: 7px; flex-wrap: wrap; }
 .modal-btns.col { flex-direction: column; }
 
-/* Settings swatches */
+/* Image icon buttons */
+.img-icon-btn {
+  background: white; border: 1.5px solid var(--purple-light);
+  border-radius: 8px; padding: 5px 7px;
+  cursor: url('assets/cursor.png') 0 0, pointer;
+  transition: all 0.1s; display: flex; align-items: center; gap: 5px;
+}
+.img-icon-btn:hover { border-color: var(--purple); transform: scale(1.08); }
+.img-icon-btn img { width: 22px; height: 22px; image-rendering: pixelated; }
+
+/* Settings swatches — updated palette */
 .bg-swatches { display: flex; gap: 7px; flex-wrap: wrap; }
-.bg-swatch { width: 30px; height: 30px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.1s; }
+.bg-swatch { width: 30px; height: 30px; border-radius: 8px; cursor: url('assets/cursor.png') 0 0, pointer; border: 2px solid transparent; transition: all 0.1s; }
 .bg-swatch:hover { transform: scale(1.15); }
 .bg-swatch.active { border-color: var(--purple-deep); box-shadow: 0 0 8px rgba(155,127,232,0.4); }
 
+/* Account modal */
+.account-info-row { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--purple-light); }
+.account-info-label { font-family: var(--font-pixel); font-size: 6px; color: var(--text-mid); }
+.account-info-value { font-size: 13px; font-weight: 700; color: var(--text-dark); }
+.account-created { font-size: 10px; color: var(--text-mid); font-weight: 600; }
+
+/* Inline add task on main screen */
+.inline-add-task { display: flex; gap: 6px; align-items: center; padding-top: 8px; border-top: 1px dashed var(--purple-light); }
+.inline-add-task .y2k-input { font-size: 11px; padding: 5px 8px; }
+
 /* Todo overlay */
-.overlay-task { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1.5px solid var(--purple-light); border-radius: 8px; cursor: pointer; transition: all 0.1s; margin-bottom: 5px; }
+.overlay-task { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1.5px solid var(--purple-light); border-radius: 8px; cursor: url('assets/cursor.png') 0 0, pointer; transition: all 0.1s; margin-bottom: 5px; }
 .overlay-task:hover { border-color: var(--purple); }
 .overlay-task.selected { border-color: var(--pink-deep); background: var(--pink-light); }
 .overlay-task-name { font-size: 12px; font-weight: 700; flex: 1; color: var(--text-dark); }
-.overlay-select { font-family: var(--font-pixel); font-size: 6px; background: white; border: 1.5px solid var(--purple); border-radius: 4px; color: var(--purple-deep); padding: 3px 5px; cursor: pointer; }
+.overlay-select { font-family: var(--font-pixel); font-size: 6px; background: white; border: 1.5px solid var(--purple); border-radius: 4px; color: var(--purple-deep); padding: 3px 5px; cursor: url('assets/cursor.png') 0 0, pointer; }
 .overlay-list-wrap { max-height: 280px; overflow-y: auto; }
 
 /* ===================== FISH POKÉDEX ===================== */

@@ -157,10 +157,16 @@
     </div>
     <div class="taskbar-center">POMOGOTCHI ✦</div>
     <div class="taskbar-right">
-      <button class="taskbar-icon-btn" onclick="openTodoOverlay()" title="To-Do">📋</button>
-      <button class="taskbar-icon-btn" onclick="openFishDex()" title="Fish Pokédex">🐡</button>
-      <button class="taskbar-icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
-      <button class="taskbar-icon-btn" onclick="handleLogout()" title="Logout">⏏️</button>
+      <button class="img-icon-btn" onclick="openTodoOverlay()" title="To-Do">📋</button>
+      <button class="img-icon-btn" onclick="openFishDex()" title="Fish Pokédex">
+        <img src="assets/fishDex.png" alt="Fish Dex"/>
+      </button>
+      <button class="img-icon-btn" onclick="openSettings()" title="Settings">
+        <img src="assets/settings.png" alt="Settings"/>
+      </button>
+      <button class="img-icon-btn" onclick="openAccountModal()" title="Account">
+        <img src="assets/account.png" alt="Account"/>
+      </button>
     </div>
   </div>
 
@@ -192,6 +198,10 @@
         <div class="slot-tasks-box">
           <div class="slot-tasks-title">CURRENT SLOT TASKS</div>
           <ul class="slot-task-list" id="current-slot-tasks"></ul>
+          <div class="inline-add-task">
+            <input type="text" class="y2k-input" id="inline-task-input" placeholder="quick add task..."/>
+            <button class="y2k-btn small pink" onclick="inlineAddTask()">+</button>
+          </div>
         </div>
       </div>
     </div>
@@ -242,7 +252,9 @@
 
   </div>
 
-  <a href="https://www.buymeacoffee.com" target="_blank" class="coffee-float y2k-btn small pink">☕ buy me a coffee</a>
+  <a href="https://www.buymeacoffee.com" target="_blank" class="coffee-float y2k-btn small pink">
+    <img src="assets/coffee.png" alt="☕" style="width:18px;height:18px;image-rendering:pixelated;vertical-align:middle;margin-right:4px;"/> buy me a coffee
+  </a>
 </div>
 
 <!-- ==================== TODO PAGE ==================== -->
@@ -329,25 +341,29 @@
   <div class="win-window modal-win">
     <div class="win-titlebar">
       <span class="win-title-text">⚙ settings</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModal('modal-settings')">✕</div></div>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-settings')">✕</div></div>
     </div>
     <div class="win-body modal-body">
       <div class="field-group">
         <label class="y2k-label">BACKGROUND COLOUR</label>
         <div class="bg-swatches" id="bg-swatches">
-          <div class="bg-swatch active" style="background:#b8c8ff" onclick="setBg('#b8c8ff')" title="Lavender Sky"></div>
-          <div class="bg-swatch" style="background:#ffc8e8" onclick="setBg('#ffc8e8')" title="Pink Dream"></div>
-          <div class="bg-swatch" style="background:#b8f0e0" onclick="setBg('#b8f0e0')" title="Mint Fresh"></div>
-          <div class="bg-swatch" style="background:#ffd8b8" onclick="setBg('#ffd8b8')" title="Peach Glow"></div>
-          <div class="bg-swatch" style="background:#fff0c8" onclick="setBg('#fff0c8')" title="Butter Yellow"></div>
-          <div class="bg-swatch" style="background:#c8e8ff" onclick="setBg('#c8e8ff')" title="Baby Blue"></div>
+          <div class="bg-swatch active" style="background:#f2dede" onclick="setBg('#f2dede')" title="Rose Blush"></div>
+          <div class="bg-swatch" style="background:#ffa3a3" onclick="setBg('#ffa3a3')" title="Coral Pink"></div>
+          <div class="bg-swatch" style="background:#fbcea0" onclick="setBg('#fbcea0')" title="Peach Sorbet"></div>
+          <div class="bg-swatch" style="background:#b5eeb9" onclick="setBg('#b5eeb9')" title="Mint Leaf"></div>
+          <div class="bg-swatch" style="background:#addfee" onclick="setBg('#addfee')" title="Sky Blue"></div>
+          <div class="bg-swatch" style="background:#d2afea" onclick="setBg('#d2afea')" title="Lavender"></div>
+          <div class="bg-swatch" style="background:#9877a2" onclick="setBg('#9877a2')" title="Deep Mauve"></div>
+          <div class="bg-swatch" style="background:#8499c1" onclick="setBg('#8499c1')" title="Steel Blue"></div>
+          <div class="bg-swatch" style="background:#d990a3" onclick="setBg('#d990a3')" title="Dusty Rose"></div>
+          <div class="bg-swatch" style="background:#96c8c5" onclick="setBg('#96c8c5')" title="Seafoam"></div>
         </div>
       </div>
       <div class="field-group">
         <label class="y2k-label">SAVED PETS</label>
         <p class="hint-text">Drag grown fish to rearrange on main screen ✨</p>
       </div>
-      <button class="y2k-btn pink" onclick="closeModal('modal-settings')">close ✕</button>
+      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-settings')">close ✕</button>
     </div>
   </div>
 </div>
@@ -357,30 +373,66 @@
   <div class="win-window modal-win wide">
     <div class="win-titlebar">
       <span class="win-title-text">🐡 fish pokédex</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModal('modal-fish-dex')">✕</div></div>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-fish-dex')">✕</div></div>
     </div>
     <div class="win-body modal-body">
       <p class="hint-text">Collect fish by completing sessions! ✨ Locked fish shown in grey.</p>
       <div class="dex-grid" id="dex-grid"></div>
-      <button class="y2k-btn pink" onclick="closeModal('modal-fish-dex')">close ✕</button>
+      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-fish-dex')">close ✕</button>
     </div>
   </div>
 </div>
 
-<!-- Todo Overlay (during session) -->
+<!-- Todo Overlay (always a modal now) -->
 <div id="todo-overlay" class="modal-overlay hidden">
   <div class="win-window modal-win wide">
     <div class="win-titlebar">
-      <span class="win-title-text">📋 tasks (session active)</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModal('todo-overlay')">✕</div></div>
+      <span class="win-title-text">📋 task board</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('todo-overlay')">✕</div></div>
     </div>
     <div class="win-body modal-body">
-      <p class="hint-text">Select tasks to add to your session ✨</p>
+      <!-- Controls -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span class="y2k-label">SORT:</span>
+        <button class="y2k-btn tiny" onclick="sortTodo('status');renderTodoOverlay()">status</button>
+        <button class="y2k-btn tiny" onclick="sortTodo('due');renderTodoOverlay()">due date</button>
+        <button class="y2k-btn tiny" onclick="sortTodo('priority');renderTodoOverlay()">priority</button>
+        <span class="y2k-label" style="margin-left:8px">FILTER:</span>
+        <button class="y2k-btn tiny" onclick="filterTodoOverlay('all')">all</button>
+        <button class="y2k-btn tiny" onclick="filterTodoOverlay('not-started')">new</button>
+        <button class="y2k-btn tiny" onclick="filterTodoOverlay('complete')">done ✓</button>
+        <button class="y2k-btn tiny" onclick="filterTodoOverlay('skipped')">skipped</button>
+      </div>
+      <!-- Inline add -->
+      <div class="inline-add-task">
+        <input type="text" class="y2k-input" id="overlay-new-task-name" placeholder="add new task..."/>
+        <select class="y2k-input small" id="overlay-new-task-priority" style="width:auto">
+          <option value="high">🔴 high</option>
+          <option value="medium" selected>🟡 medium</option>
+          <option value="low">🟢 low</option>
+        </select>
+        <input type="date" class="y2k-input small" id="overlay-new-task-due" style="width:auto"/>
+        <button class="y2k-btn small pink" onclick="overlayAddTask()">+ add</button>
+      </div>
+      <!-- Task list -->
       <div class="overlay-list-wrap" id="todo-overlay-list"></div>
       <div class="modal-btns">
-        <button class="y2k-btn filled-pink" onclick="addOverlayTasksToSession()">▶ add to session</button>
-        <button class="y2k-btn" onclick="closeModal('todo-overlay')">close</button>
+        <button class="y2k-btn filled-pink" onclick="addOverlayTasksToSession()">▶ add selected to session</button>
+        <button class="y2k-btn" onclick="closeModalAndResume('todo-overlay')">close</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div id="modal-account" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">👤 account</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-account')">✕</div></div>
+    </div>
+    <div class="win-body modal-body" id="account-modal-body">
+      <!-- rendered by JS -->
     </div>
   </div>
 </div>

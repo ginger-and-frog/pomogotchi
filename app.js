@@ -66,7 +66,7 @@ let state = {
   todos: [], selectedTodoIds: [],
   todoFilter: 'all', todoSort: 'due',
   // UI
-  bgColour: '#b8c8ff',
+  bgColour: '#f2dede',
   incompleteQueue: [],
 };
 
@@ -517,6 +517,7 @@ function renderSavedPets() {
 
 // ===================== FISH POKÉDEX =====================
 function openFishDex() {
+  pauseForModal();
   const grid=document.getElementById('dex-grid');
   grid.innerHTML=FISH_DB.map(f=>{
     const owned=state.collectedFish.includes(f.id);
@@ -576,8 +577,9 @@ function nextIncomplete() { state.incompleteQueue.shift(); if(state.incompleteQu
 
 // ===================== TODO =====================
 function openTodoOverlay() {
-  if(state.sessionActive){ renderTodoOverlay(); openModal('todo-overlay'); }
-  else { renderTodoPage(); showScreen('screen-todo'); }
+  pauseForModal();
+  renderTodoOverlay();
+  openModal('todo-overlay');
 }
 function renderTodoPage() {
   const c=document.getElementById('todo-list-container');
@@ -608,19 +610,46 @@ function renderTodoPage() {
     </div>`;
   }).join('');
 }
+function overlayAddTask() {
+  const name = document.getElementById('overlay-new-task-name').value.trim();
+  if (!name) return;
+  const task = {
+    id: 'task_'+Date.now(), name,
+    due: document.getElementById('overlay-new-task-due').value,
+    priority: document.getElementById('overlay-new-task-priority').value,
+    status: 'not-started', slotAssignment: null, completed: false,
+  };
+  state.todos.push(task);
+  document.getElementById('overlay-new-task-name').value='';
+  renderTodoOverlay(); saveToStorage();
+}
+
+function filterTodoOverlay(f) { state.todoFilter=f; renderTodoOverlay(); }
+
 function renderTodoOverlay() {
   const slotOpts=state.slots.map((s,i)=>`<option value="${s.id}">slot ${i+1}</option>`).join('');
-  document.getElementById('todo-overlay-list').innerHTML=
-    state.todos.filter(t=>t.status!=='complete').map(t=>{
-      const sel=state.selectedTodoIds.includes(t.id);
-      return `<div class="overlay-task ${sel?'selected':''}" onclick="toggleTodoSelect('${t.id}')">
-        <span>${sel?'☑':'☐'}</span>
-        <span class="overlay-task-name">${t.name}</span>
-        <select class="overlay-select" id="ol-target-${t.id}" onclick="event.stopPropagation()">
-          <option value="overall">overall</option>${slotOpts}
-        </select>
-      </div>`;
-    }).join('')||'<p class="hint-text">No pending tasks!</p>';
+  let tasks=[...state.todos];
+  if(state.todoFilter!=='all') tasks=tasks.filter(t=>t.status===state.todoFilter);
+  const pMap={high:0,medium:1,low:2};
+  if(state.todoSort==='due') tasks.sort((a,b)=>(a.due||'9999')<(b.due||'9999')?-1:1);
+  else if(state.todoSort==='priority') tasks.sort((a,b)=>(pMap[a.priority]||1)-(pMap[b.priority]||1));
+
+  document.getElementById('todo-overlay-list').innerHTML = tasks.length
+    ? tasks.map(t=>{
+        const sel=state.selectedTodoIds.includes(t.id);
+        const done=t.status==='complete';
+        return `<div class="overlay-task ${sel?'selected':''}" onclick="toggleTodoSelect('${t.id}');renderTodoOverlay()">
+          <span>${sel?'☑':'☐'}</span>
+          <span class="overlay-task-name" style="${done?'text-decoration:line-through;opacity:0.5':''}">${t.name}</span>
+          <span class="badge ${t.priority}" style="flex-shrink:0">${t.priority}</span>
+          ${t.due?`<span class="due-badge" style="flex-shrink:0">📅 ${t.due}</span>`:''}
+          <select class="overlay-select" id="ol-target-${t.id}" onclick="event.stopPropagation()">
+            <option value="overall">overall</option>${slotOpts}
+          </select>
+          <button class="y2k-btn tiny danger" onclick="event.stopPropagation();deleteTask('${t.id}');renderTodoOverlay()">✕</button>
+        </div>`;
+      }).join('')
+    : '<p class="hint-text">No tasks! Add one above ✨</p>';
 }
 function addOverlayTasksToSession() {
   state.selectedTodoIds.forEach(id=>{
@@ -632,7 +661,7 @@ function addOverlayTasksToSession() {
     else if(state.slots[state.currentSlotIndex]){const s=state.slots[state.currentSlotIndex];if(!s.tasks.find(t=>t.id===id))s.tasks.push({...mt});}
   });
   state.selectedTodoIds=[];
-  closeModal('todo-overlay'); renderCurrentSlotTasks(); renderSlotsOverview(); saveToStorage();
+  closeModalAndResume('todo-overlay'); renderCurrentSlotTasks(); renderSlotsOverview(); saveToStorage();
 }
 function toggleTodoSelect(id) {
   const i=state.selectedTodoIds.indexOf(id);
@@ -673,11 +702,127 @@ function openEditStatus(id){
   if(c&&statuses.includes(c)){t.status=c;if(c==='complete')t.completed=true;renderTodoPage();saveToStorage();}
 }
 
-// ===================== SETTINGS =====================
-function openSettings(){ openModal('modal-settings'); }
+// ===================== MODAL PAUSE HELPERS =====================
+function pauseForModal() {
+  if (state.sessionActive && !state.isPaused) {
+    state._pausedForModal = true;
+    state.isPaused = true;
+  }
+}
+function resumeAfterModal() {
+  if (state._pausedForModal) {
+    state._pausedForModal = false;
+    state.isPaused = false;
+  }
+}
+function closeModalAndResume(id) {
+  closeModal(id);
+  resumeAfterModal();
+}
+
+// ===================== ACCOUNT MODAL =====================
+function openAccountModal() {
+  pauseForModal();
+  const body = document.getElementById('account-modal-body');
+  if (!state.currentUser) {
+    body.innerHTML = `
+      <p class="hint-text">You're playing as a guest — sign in to save progress! ✨</p>
+      <div class="field-group">
+        <label class="y2k-label">EMAIL</label>
+        <input type="email" id="acc-login-email" class="y2k-input" placeholder="trainer@email.com"/>
+      </div>
+      <div class="field-group">
+        <label class="y2k-label">PASSWORD</label>
+        <input type="password" id="acc-login-pass" class="y2k-input" placeholder="••••••••"/>
+      </div>
+      <div class="modal-btns">
+        <button class="y2k-btn filled-purple" onclick="accountSignIn()">▶ sign in</button>
+        <button class="y2k-btn" onclick="closeModalAndResume('modal-account')">cancel</button>
+      </div>
+      <p class="auth-error" id="acc-login-error"></p>`;
+  } else {
+    const users = getUsers();
+    const created = users[state.currentUser.email]?.created || 'a while ago';
+    body.innerHTML = `
+      <div class="account-info-row">
+        <span class="account-info-label">TRAINER NAME</span>
+        <span class="account-info-value">✨ ${state.currentUser.name}</span>
+      </div>
+      <div class="account-info-row">
+        <span class="account-info-label">EMAIL</span>
+        <span class="account-info-value">${state.currentUser.email}</span>
+      </div>
+      <div class="account-info-row">
+        <span class="account-info-label">FISH COLLECTED</span>
+        <span class="account-info-value">🐠 ${state.collectedFish.length} / ${FISH_DB.length}</span>
+      </div>
+      <div class="account-info-row">
+        <span class="account-info-label">SAVED PETS</span>
+        <span class="account-info-value">🌟 ${state.savedPets.length} fully grown</span>
+      </div>
+      <div class="modal-btns" style="margin-top:4px">
+        <button class="y2k-btn danger small" onclick="handleLogout()">⏏ log out</button>
+        <button class="y2k-btn danger small" onclick="deleteAccount()">🗑 delete account</button>
+        <button class="y2k-btn small" onclick="closeModalAndResume('modal-account')">close</button>
+      </div>`;
+  }
+  openModal('modal-account');
+}
+
+function accountSignIn() {
+  const email = document.getElementById('acc-login-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('acc-login-pass').value;
+  const err   = document.getElementById('acc-login-error');
+  const users = getUsers();
+  if (!users[email] || users[email].password !== btoa(pass)) { err.textContent='⚠ wrong email or password'; return; }
+  saveToStorage(); // save guest progress
+  state.currentUser = {email, name: users[email].name};
+  loadFromStorage();
+  closeModalAndResume('modal-account');
+  document.getElementById('display-trainer-name').textContent = state.currentUser.name.toUpperCase();
+}
+
+function deleteAccount() {
+  if (!confirm('Delete your account? This cannot be undone!! 😱')) return;
+  const users = getUsers();
+  delete users[state.currentUser.email];
+  saveUsers(users);
+  localStorage.removeItem(`pomogotchi_${state.currentUser.email}`);
+  state.currentUser = null;
+  closeModal('modal-account');
+  clearInterval(state.timerInterval);
+  state.sessionActive = false;
+  showScreen('screen-auth');
+}
+
+// ===================== INLINE ADD TASK =====================
+function inlineAddTask() {
+  const input = document.getElementById('inline-task-input');
+  const name  = input.value.trim();
+  if (!name) return;
+  const task = {
+    id: 'task_' + Date.now(), name,
+    due: '', priority: 'medium',
+    status: 'not-started', slotAssignment: null, completed: false,
+  };
+  state.todos.push(task);
+  // Add to current slot directly
+  const slot = state.slots[state.currentSlotIndex];
+  if (slot) slot.tasks.push({...task});
+  input.value = '';
+  renderCurrentSlotTasks();
+  renderSlotsOverview();
+  saveToStorage();
+}
+
+
+function openSettings(){ pauseForModal(); openModal('modal-settings'); }
 function setBg(c){
   state.bgColour=c; document.body.style.background=c;
-  document.querySelectorAll('.bg-swatch').forEach(s=>s.classList.toggle('active',s.style.background===c||s.style.backgroundColor===c));
+  document.querySelectorAll('.bg-swatch').forEach(s=>{
+    const sc=s.style.background||s.style.backgroundColor;
+    s.classList.toggle('active', sc===c);
+  });
   saveToStorage();
 }
 
@@ -723,11 +868,18 @@ function formatStatus(s){return({'not-started':'not started','in-progress':'in p
 
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded',()=>{
+  document.body.style.background = state.bgColour;
   showScreen('screen-auth');
   document.querySelectorAll('.modal-overlay').forEach(o=>{
-    o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);});
+    o.addEventListener('click',e=>{
+      if(e.target===o){ closeModal(o.id); resumeAfterModal(); }
+    });
   });
   document.addEventListener('keydown',e=>{
-    if(e.code==='Space'&&state.sessionActive){e.preventDefault();togglePause();}
+    if(e.code==='Space'&&state.sessionActive&&document.activeElement.tagName!=='INPUT'){
+      e.preventDefault(); togglePause();
+    }
+    if(e.code==='Enter'&&document.activeElement.id==='inline-task-input') inlineAddTask();
+    if(e.code==='Enter'&&document.activeElement.id==='overlay-new-task-name') overlayAddTask();
   });
 });
