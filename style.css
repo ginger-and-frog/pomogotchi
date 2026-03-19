@@ -24,8 +24,8 @@
   --cream:       #fffdf5;
 
   /* UI */
-  --win-bg:      #b8c8ff;   /* classic Y2K desktop blue-lilac */
-  --win-title:   linear-gradient(90deg, #9b7fe8, #ff80bf);
+  --win-bg:      #b8c8ff;   
+  --win-title:   #ff80bf;
   --win-body:    #fffdf5;
   --win-border:  #9b7fe8;
   --win-shadow:  3px 3px 0px #9b7fe8;

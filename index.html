@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pomogotchi 🐠</title>
+  <title>Pomogotchi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css"/>
@@ -24,15 +24,14 @@
         </div>
       </div>
       <div class="win-body logo-inner">
-        <span class="logo-emoji">🐠</span>
         <div class="logo-title">POMOGOTCHI</div>
-        <div class="logo-sub">focus. grow. collect. ✨</div>
+        <div class="logo-sub">focus. grow. collect.</div>
       </div>
     </div>
 
     <div class="win-window" style="width:100%">
       <div class="win-titlebar">
-        <span class="win-title-text">🔐 login</span>
+        <span class="win-title-text">login</span>
         <div class="win-controls">
           <div class="win-btn">✕</div>
         </div>
@@ -118,19 +117,19 @@
 
         <!-- TASK ASSIGNMENT -->
         <div class="setup-section">
-          <div class="section-title">📋 ASSIGN TASKS TO SLOTS</div>
+          <div class="section-title">Assign Tasks to Slots</div>
           <div id="slot-task-assignment"><p class="hint-text">Add tasks in the To-Do page first!</p></div>
           <button class="y2k-btn small blue" onclick="goToTodoPage()">+ open to-do list</button>
         </div>
 
         <!-- PET FISH -->
         <div class="setup-section" id="pet-section">
-          <div class="section-title">🐠 YOUR FISH</div>
+          <div class="section-title">Your Fish</div>
           <div id="pet-locked-msg" class="hidden">
-            <p class="hint-text">✨ Your fish is growing! Can't change until fully grown.</p>
+            <p class="hint-text">Your fish is growing! Can't change until fully grown.</p>
           </div>
           <div id="pet-choice-area">
-            <p class="hint-text">Your fish will be randomly assigned when you begin! ✨<br><br>Check the fish pokédex to see what you might get 🐡</p>
+            <p class="hint-text">Your fish will be randomly assigned when you begin!<br><br>Check the fish pokédex to see what you might get 🐡</p>
           </div>
           <div id="pet-name-section">
             <div class="field-group">
@@ -140,7 +139,7 @@
           </div>
         </div>
 
-        <button class="y2k-btn filled-pink full large" onclick="startSession()">🐠 BEGIN SESSION ▶</button>
+        <button class="y2k-btn filled-pink full large" onclick="startSession()">BEGIN SESSION ▶</button>
       </div>
     </div>
 
@@ -225,10 +224,10 @@
             <div class="growth-fill" id="tama-growth-fill" style="width:0%"></div>
           </div>
         </div>
-        <div class="tama-status" id="tama-status">your fish is growing... 🐣</div>
+        <div class="tama-status" id="tama-status">your fish is growing...</div>
         <!-- Slot 4 colour picker -->
         <div id="colour-picker-section" class="hidden" style="text-align:center">
-          <div class="y2k-label" style="margin-bottom:6px">CHOOSE YOUR FISH COLOUR ✨</div>
+          <div class="y2k-label" style="margin-bottom:6px">Choose Your Fish Colour</div>
           <div class="colour-picker-row" id="colour-picker-row"></div>
         </div>
         <div class="saved-pets-row" id="saved-pets-row"></div>
@@ -238,13 +237,13 @@
     <!-- SLOTS PANEL -->
     <div class="win-window slots-win">
       <div class="win-titlebar">
-        <span class="win-title-text">📅 session slots</span>
+        <span class="win-title-text">session slots</span>
         <div class="win-controls"><div class="win-btn">✕</div></div>
       </div>
       <div class="win-body" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:10px">
         <div id="slots-overview-list"></div>
         <div class="skipped-box" id="skipped-box">
-          <div class="skipped-title">⚠ SKIPPED</div>
+          <div class="skipped-title">⚠ skipped</div>
           <ul class="skipped-list" id="skipped-list"></ul>
         </div>
       </div>
@@ -261,7 +260,7 @@
 <div id="screen-todo" class="screen">
   <div class="todo-topbar">
     <button class="y2k-btn small" onclick="goBack()">◀ back</button>
-    <span class="todo-title">📋 task board</span>
+    <span class="todo-title">task board</span>
     <button class="y2k-btn small filled-pink" onclick="openAddTask()">+ add task</button>
   </div>
   <div class="todo-scroll">
