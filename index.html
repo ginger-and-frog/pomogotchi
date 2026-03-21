@@ -10,196 +10,76 @@
 </head>
 <body>
 
-<!-- ==================== AUTH SCREEN ==================== -->
-<div id="screen-auth" class="screen active">
-  <div class="auth-wrapper">
-
-    <div class="win-window logo-window">
-      <div class="win-titlebar">
-        <span class="win-title-text">✦ POMOGOTCHI.exe</span>
-        <div class="win-controls">
-          <div class="win-btn">─</div>
-          <div class="win-btn">□</div>
-          <div class="win-btn">✕</div>
-        </div>
-      </div>
-      <div class="win-body logo-inner">
-        <div class="logo-title">POMOGOTCHI</div>
-        <div class="logo-sub">focus. grow. collect.</div>
-      </div>
-    </div>
-
-    <div class="win-window" style="width:100%">
-      <div class="win-titlebar">
-        <span class="win-title-text">login</span>
-        <div class="win-controls">
-          <div class="win-btn">✕</div>
-        </div>
-      </div>
-      <div class="win-body">
-        <div class="auth-tabs">
-          <button class="tab-btn active" onclick="switchAuthTab('login',this)">Login</button>
-          <button class="tab-btn" onclick="switchAuthTab('register',this)">New Account</button>
-        </div>
-
-        <div id="tab-login" class="tab-content active">
-          <div class="field-group">
-            <label class="y2k-label">EMAIL</label>
-            <input type="email" id="login-email" class="y2k-input" placeholder="trainer@email.com"/>
-          </div>
-          <div class="field-group">
-            <label class="y2k-label">PASSWORD</label>
-            <input type="password" id="login-password" class="y2k-input" placeholder="••••••••"/>
-          </div>
-          <button class="y2k-btn filled-purple full large" onclick="handleLogin()">▶ START GAME</button>
-          <p class="auth-error" id="login-error"></p>
-        </div>
-
-        <div id="tab-register" class="tab-content">
-          <div class="field-group">
-            <label class="y2k-label">TRAINER NAME</label>
-            <input type="text" id="reg-name" class="y2k-input" placeholder="your name!"/>
-          </div>
-          <div class="field-group">
-            <label class="y2k-label">EMAIL</label>
-            <input type="email" id="reg-email" class="y2k-input" placeholder="trainer@email.com"/>
-          </div>
-          <div class="field-group">
-            <label class="y2k-label">PASSWORD</label>
-            <input type="password" id="reg-password" class="y2k-input" placeholder="min 6 chars"/>
-          </div>
-          <button class="y2k-btn filled-pink full large" onclick="handleRegister()">✨ CREATE ACCOUNT</button>
-          <p class="auth-error" id="reg-error"></p>
-        </div>
-
-        <p class="guest-link" onclick="guestMode()">[ play as guest — no saving ]</p>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ==================== SETUP SCREEN ==================== -->
-<div id="screen-setup" class="screen">
-  <div class="setup-scroll">
-
-    <div class="win-window setup-window">
-      <div class="win-titlebar">
-        <span class="win-title-text">⚙ session setup</span>
-        <div class="win-controls"><div class="win-btn">✕</div></div>
-      </div>
-      <div class="win-body" style="display:flex;flex-direction:column;gap:16px">
-
-        <!-- TIME -->
-        <div class="setup-section">
-          <div class="section-title">⏱ TIME SLOTS</div>
-          <div class="time-row">
-            <div class="field-group small">
-              <label class="y2k-label">FOCUS (min)</label>
-              <input type="number" id="focus-time" class="y2k-input small" value="25" min="1" max="120"/>
-            </div>
-            <div class="field-group small">
-              <label class="y2k-label">BREAK (min)</label>
-              <input type="number" id="break-time" class="y2k-input small" value="5" min="1" max="60"/>
-            </div>
-            <div class="field-group small">
-              <label class="y2k-label">TOTAL (min)</label>
-              <input type="number" id="total-time" class="y2k-input small" value="120" min="1" max="480"/>
-            </div>
-          </div>
-          <label class="y2k-checkbox-label">
-            <input type="checkbox" id="show-overall" checked/>
-            <span class="checkbox-box"></span>
-            Show overall timer
-          </label>
-          <button class="y2k-btn small mint" onclick="generateSlots()">↺ recalculate slots</button>
-        </div>
-
-        <!-- TASK ASSIGNMENT -->
-        <div class="setup-section">
-          <div class="section-title">Assign Tasks to Slots</div>
-          <div id="slot-task-assignment"><p class="hint-text">Add tasks in the To-Do page first!</p></div>
-          <button class="y2k-btn small blue" onclick="goToTodoPage()">+ open to-do list</button>
-        </div>
-
-        <!-- PET FISH -->
-        <div class="setup-section" id="pet-section">
-          <div class="section-title">Your Fish</div>
-          <div id="pet-locked-msg" class="hidden">
-            <p class="hint-text">Your fish is growing! Can't change until fully grown.</p>
-          </div>
-          <div id="pet-choice-area">
-            <p class="hint-text">Your fish will be randomly assigned when you begin!<br><br>Check the fish pokédex to see what you might get 🐡</p>
-          </div>
-          <div id="pet-name-section">
-            <div class="field-group">
-              <label class="y2k-label">NAME YOUR FISH TANK</label>
-              <input type="text" id="pet-name-input" class="y2k-input" placeholder="e.g. the ocean, bubbly, nemo's home..."/>
-            </div>
-          </div>
-        </div>
-
-        <button class="y2k-btn filled-pink full large" onclick="startSession()">BEGIN SESSION ▶</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ==================== MAIN SCREEN ==================== -->
-<div id="screen-main" class="screen">
+<!-- ==================== MAIN SCREEN (always visible) ==================== -->
+<div id="screen-main">
 
   <!-- TASKBAR -->
   <div class="taskbar">
     <div class="taskbar-left">
-      <span class="trainer-chip" id="display-trainer-name">TRAINER</span>
+      <span class="trainer-chip" id="display-trainer-name">GUEST</span>
     </div>
-    <div class="taskbar-center">POMOGOTCHI ✦</div>
+    <div class="taskbar-center">POMOGOTCHI</div>
     <div class="taskbar-right">
-      <button class="img-icon-btn" onclick="openTodoOverlay()" title="To-Do">📋</button>
-      <button class="img-icon-btn" onclick="openFishDex()" title="Fish Pokédex">
-        <img src="assets/fishDex.png" alt="Fish Dex"/>
+      <button class="img-icon-btn" onclick="openTodoModal()" title="To-Do List">
+        <span class="y2k-label" style="font-size:7px">TODO</span>
+      </button>
+      <button class="img-icon-btn" onclick="openFishDex()" title="Fish Dex">
+        <img src="assets/fishDex.png" alt="Fish Dex" class="pixel-img"/>
       </button>
       <button class="img-icon-btn" onclick="openSettings()" title="Settings">
-        <img src="assets/settings.png" alt="Settings"/>
+        <img src="assets/settings.png" alt="Settings" class="pixel-img"/>
       </button>
       <button class="img-icon-btn" onclick="openAccountModal()" title="Account">
-        <img src="assets/account.png" alt="Account"/>
+        <img src="assets/account.png" alt="Account" class="pixel-img"/>
       </button>
     </div>
   </div>
 
+  <!-- MAIN LAYOUT -->
   <div class="main-layout">
 
     <!-- TIMER PANEL -->
     <div class="win-window timer-win">
       <div class="win-titlebar">
-        <span class="win-title-text">⏱ timer</span>
-        <div class="win-controls"><div class="win-btn">✕</div></div>
-      </div>
-      <div class="win-body" style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding:12px">
-        <div class="slot-pill">
-          <span id="slot-badge">SLOT 1 / 4</span>
+        <span class="win-title-text">TIMER</span>
+        <div class="win-controls">
+          <div class="win-btn" onclick="openSetupModal()">+</div>
         </div>
-        <div class="phase-label" id="timer-mode-label">FOCUS ✨</div>
-        <div class="timer-display" id="main-timer">25:00</div>
+      </div>
+      <div class="win-body timer-body">
+        <div class="slot-pill" id="slot-badge">-- / --</div>
+        <div class="phase-label" id="timer-mode-label">NO SESSION</div>
+        <div class="timer-display" id="main-timer">--:--</div>
         <div class="progress-wrap">
-          <div class="progress-fill" id="timer-bar"></div>
+          <div class="progress-fill" id="timer-bar" style="width:0%"></div>
         </div>
         <div id="overall-timer-row" class="overall-row">
           <span class="overall-label">OVERALL</span>
-          <span class="overall-time" id="overall-timer">2:00:00</span>
+          <span class="overall-time" id="overall-timer">--:--</span>
         </div>
         <div class="timer-btns">
-          <button class="y2k-btn pink small" id="btn-pause-resume" onclick="togglePause()">⏸ pause</button>
-          <button class="y2k-btn danger small" onclick="confirmStop()">⏹ stop</button>
+          <button class="y2k-btn small pink" id="btn-pause-resume" onclick="togglePause()">PAUSE</button>
+          <button class="y2k-btn small danger" onclick="confirmStop()">STOP</button>
+          <button class="y2k-btn small filled-purple" onclick="openSetupModal()">NEW SESSION</button>
         </div>
+
+        <!-- CURRENT SLOT TASKS -->
         <div class="slot-tasks-box">
-          <div class="slot-tasks-title">CURRENT SLOT TASKS</div>
+          <div class="slot-tasks-header">
+            <span class="slot-tasks-title">CURRENT TASKS</span>
+          </div>
           <ul class="slot-task-list" id="current-slot-tasks"></ul>
+
+          <!-- Skip drop zone -->
+          <div class="skip-drop-zone" id="skip-drop-zone">
+            drag task here to skip
+          </div>
+
+          <!-- Inline add -->
           <div class="inline-add-task">
-            <input type="text" class="y2k-input" id="inline-task-input" placeholder="quick add task..."/>
+            <input type="text" class="y2k-input" id="inline-task-input" placeholder="add task to this slot..."/>
             <button class="y2k-btn small pink" onclick="inlineAddTask()">+</button>
+            <button class="y2k-btn small" onclick="openAddFromTaskList()">from list</button>
           </div>
         </div>
       </div>
@@ -208,12 +88,16 @@
     <!-- FISH TANK PANEL -->
     <div class="win-window tank-win">
       <div class="win-titlebar">
-        <span class="win-title-text" id="tama-name-display">🐠 my fish tank</span>
-        <div class="win-controls"><div class="win-btn">✕</div></div>
+        <span class="win-title-text" id="tama-name-display">FISH TANK</span>
+        <div class="win-controls"><div class="win-btn">-</div></div>
       </div>
-      <div class="win-body" style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;overflow:hidden;padding:10px">
+      <div class="win-body tank-body">
         <div class="fish-tank" id="fish-tank">
-          <!-- Fish/egg rendered here by JS -->
+          <!-- bubbles -->
+          <div class="bubble" style="left:15%;bottom:10%;width:6px;height:6px;animation-duration:5s"></div>
+          <div class="bubble" style="left:40%;bottom:5%;width:4px;height:4px;animation-duration:7s;animation-delay:1s"></div>
+          <div class="bubble" style="left:70%;bottom:15%;width:8px;height:8px;animation-duration:6s;animation-delay:2s"></div>
+          <div class="bubble" style="left:85%;bottom:8%;width:5px;height:5px;animation-duration:8s;animation-delay:0.5s"></div>
         </div>
         <div class="growth-wrap">
           <div class="growth-label-row">
@@ -224,211 +108,49 @@
             <div class="growth-fill" id="tama-growth-fill" style="width:0%"></div>
           </div>
         </div>
-        <div class="tama-status" id="tama-status">your fish is growing...</div>
-        <!-- Slot 4 colour picker -->
-        <div id="colour-picker-section" class="hidden" style="text-align:center">
-          <div class="y2k-label" style="margin-bottom:6px">Choose Your Fish Colour</div>
-          <div class="colour-picker-row" id="colour-picker-row"></div>
+        <div class="tama-status" id="tama-status">start a session to grow your fish!</div>
+        <!-- Saved fish row -->
+        <div class="saved-fish-scroll">
+          <div class="saved-pets-row" id="saved-pets-row"></div>
         </div>
-        <div class="saved-pets-row" id="saved-pets-row"></div>
       </div>
     </div>
 
-    <!-- SLOTS PANEL -->
+    <!-- SLOTS + SKIPPED PANEL -->
     <div class="win-window slots-win">
       <div class="win-titlebar">
-        <span class="win-title-text">session slots</span>
-        <div class="win-controls"><div class="win-btn">✕</div></div>
+        <span class="win-title-text">SESSION</span>
+        <div class="win-controls"><div class="win-btn">-</div></div>
       </div>
-      <div class="win-body" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:10px">
+      <div class="win-body slots-body">
         <div id="slots-overview-list"></div>
-        <div class="skipped-box" id="skipped-box">
-          <div class="skipped-title">⚠ skipped</div>
+        <!-- Skipped box -->
+        <div class="skipped-box">
+          <div class="skipped-title">SKIPPED</div>
           <ul class="skipped-list" id="skipped-list"></ul>
         </div>
       </div>
     </div>
 
-  </div>
+  </div><!-- end main-layout -->
 
-  <a href="https://www.buymeacoffee.com" target="_blank" class="coffee-float y2k-btn small pink">
-    <img src="assets/coffee.png" alt="☕" style="width:18px;height:18px;image-rendering:pixelated;vertical-align:middle;margin-right:4px;"/> buy me a coffee
+  <!-- Buy me a coffee -->
+  <a href="https://www.buymeacoffee.com" target="_blank" class="coffee-float">
+    <img src="assets/coffee.png" alt="Buy me a coffee" class="pixel-img coffee-img"/>
+    <span>buy me a coffee</span>
   </a>
-</div>
 
-<!-- ==================== TODO PAGE ==================== -->
-<div id="screen-todo" class="screen">
-  <div class="todo-topbar">
-    <button class="y2k-btn small" onclick="goBack()">◀ back</button>
-    <span class="todo-title">task board</span>
-    <button class="y2k-btn small filled-pink" onclick="openAddTask()">+ add task</button>
-  </div>
-  <div class="todo-scroll">
-    <div class="todo-controls">
-      <div class="sort-row">
-        <span class="y2k-label">SORT:</span>
-        <button class="y2k-btn tiny" onclick="sortTodo('status')">status</button>
-        <button class="y2k-btn tiny" onclick="sortTodo('due')">due date</button>
-        <button class="y2k-btn tiny" onclick="sortTodo('priority')">priority</button>
-      </div>
-      <div class="filter-row">
-        <span class="y2k-label">FILTER:</span>
-        <button class="y2k-btn tiny" id="filter-all" onclick="filterTodo('all')">all</button>
-        <button class="y2k-btn tiny" id="filter-not-started" onclick="filterTodo('not-started')">new</button>
-        <button class="y2k-btn tiny" id="filter-in-progress" onclick="filterTodo('in-progress')">active</button>
-        <button class="y2k-btn tiny" id="filter-complete" onclick="filterTodo('complete')">done</button>
-        <button class="y2k-btn tiny" id="filter-skipped" onclick="filterTodo('skipped')">skipped</button>
-      </div>
-      <button class="y2k-btn small pink" onclick="moveSelectedToMain()">▶ move to session</button>
-    </div>
-    <div id="todo-list-container"></div>
-  </div>
-</div>
+</div><!-- end screen-main -->
+
 
 <!-- ==================== MODALS ==================== -->
 
-<!-- Add Task -->
-<div id="modal-add-task" class="modal-overlay hidden">
-  <div class="win-window modal-win">
-    <div class="win-titlebar">
-      <span class="win-title-text">+ new task</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModal('modal-add-task')">✕</div></div>
-    </div>
-    <div class="win-body modal-body">
-      <div class="field-group">
-        <label class="y2k-label">TASK NAME</label>
-        <input type="text" id="task-name-input" class="y2k-input" placeholder="what do you need to do?"/>
-      </div>
-      <div class="time-row">
-        <div class="field-group small">
-          <label class="y2k-label">DUE DATE</label>
-          <input type="date" id="task-due-input" class="y2k-input small"/>
-        </div>
-        <div class="field-group small">
-          <label class="y2k-label">PRIORITY</label>
-          <select id="task-priority-input" class="y2k-input small">
-            <option value="high">🔴 high</option>
-            <option value="medium" selected>🟡 medium</option>
-            <option value="low">🟢 low</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-btns">
-        <button class="y2k-btn filled-pink" onclick="saveTask()">save ✨</button>
-        <button class="y2k-btn" onclick="closeModal('modal-add-task')">cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Incomplete Task -->
-<div id="modal-incomplete-task" class="modal-overlay hidden">
-  <div class="win-window modal-win">
-    <div class="win-titlebar">
-      <span class="win-title-text">⚠ slot ended!</span>
-      <div class="win-controls"><div class="win-btn">✕</div></div>
-    </div>
-    <div class="win-body modal-body">
-      <p class="modal-msg" id="incomplete-task-msg">task not complete — what do?</p>
-      <div id="incomplete-task-options" class="modal-btns col"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Settings -->
-<div id="modal-settings" class="modal-overlay hidden">
-  <div class="win-window modal-win">
-    <div class="win-titlebar">
-      <span class="win-title-text">⚙ settings</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-settings')">✕</div></div>
-    </div>
-    <div class="win-body modal-body">
-      <div class="field-group">
-        <label class="y2k-label">BACKGROUND COLOUR</label>
-        <div class="bg-swatches" id="bg-swatches">
-          <div class="bg-swatch active" style="background:#f2dede" onclick="setBg('#f2dede')" title="Rose Blush"></div>
-          <div class="bg-swatch" style="background:#ffa3a3" onclick="setBg('#ffa3a3')" title="Coral Pink"></div>
-          <div class="bg-swatch" style="background:#fbcea0" onclick="setBg('#fbcea0')" title="Peach Sorbet"></div>
-          <div class="bg-swatch" style="background:#b5eeb9" onclick="setBg('#b5eeb9')" title="Mint Leaf"></div>
-          <div class="bg-swatch" style="background:#addfee" onclick="setBg('#addfee')" title="Sky Blue"></div>
-          <div class="bg-swatch" style="background:#d2afea" onclick="setBg('#d2afea')" title="Lavender"></div>
-          <div class="bg-swatch" style="background:#9877a2" onclick="setBg('#9877a2')" title="Deep Mauve"></div>
-          <div class="bg-swatch" style="background:#8499c1" onclick="setBg('#8499c1')" title="Steel Blue"></div>
-          <div class="bg-swatch" style="background:#d990a3" onclick="setBg('#d990a3')" title="Dusty Rose"></div>
-          <div class="bg-swatch" style="background:#96c8c5" onclick="setBg('#96c8c5')" title="Seafoam"></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="y2k-label">SAVED PETS</label>
-        <p class="hint-text">Drag grown fish to rearrange on main screen ✨</p>
-      </div>
-      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-settings')">close ✕</button>
-    </div>
-  </div>
-</div>
-
-<!-- Fish Pokédex -->
-<div id="modal-fish-dex" class="modal-overlay hidden">
-  <div class="win-window modal-win wide">
-    <div class="win-titlebar">
-      <span class="win-title-text">🐡 fish pokédex</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-fish-dex')">✕</div></div>
-    </div>
-    <div class="win-body modal-body">
-      <p class="hint-text">Collect fish by completing sessions! ✨ Locked fish shown in grey.</p>
-      <div class="dex-grid" id="dex-grid"></div>
-      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-fish-dex')">close ✕</button>
-    </div>
-  </div>
-</div>
-
-<!-- Todo Overlay (always a modal now) -->
-<div id="todo-overlay" class="modal-overlay hidden">
-  <div class="win-window modal-win wide">
-    <div class="win-titlebar">
-      <span class="win-title-text">📋 task board</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('todo-overlay')">✕</div></div>
-    </div>
-    <div class="win-body modal-body">
-      <!-- Controls -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <span class="y2k-label">SORT:</span>
-        <button class="y2k-btn tiny" onclick="sortTodo('status');renderTodoOverlay()">status</button>
-        <button class="y2k-btn tiny" onclick="sortTodo('due');renderTodoOverlay()">due date</button>
-        <button class="y2k-btn tiny" onclick="sortTodo('priority');renderTodoOverlay()">priority</button>
-        <span class="y2k-label" style="margin-left:8px">FILTER:</span>
-        <button class="y2k-btn tiny" onclick="filterTodoOverlay('all')">all</button>
-        <button class="y2k-btn tiny" onclick="filterTodoOverlay('not-started')">new</button>
-        <button class="y2k-btn tiny" onclick="filterTodoOverlay('complete')">done ✓</button>
-        <button class="y2k-btn tiny" onclick="filterTodoOverlay('skipped')">skipped</button>
-      </div>
-      <!-- Inline add -->
-      <div class="inline-add-task">
-        <input type="text" class="y2k-input" id="overlay-new-task-name" placeholder="add new task..."/>
-        <select class="y2k-input small" id="overlay-new-task-priority" style="width:auto">
-          <option value="high">🔴 high</option>
-          <option value="medium" selected>🟡 medium</option>
-          <option value="low">🟢 low</option>
-        </select>
-        <input type="date" class="y2k-input small" id="overlay-new-task-due" style="width:auto"/>
-        <button class="y2k-btn small pink" onclick="overlayAddTask()">+ add</button>
-      </div>
-      <!-- Task list -->
-      <div class="overlay-list-wrap" id="todo-overlay-list"></div>
-      <div class="modal-btns">
-        <button class="y2k-btn filled-pink" onclick="addOverlayTasksToSession()">▶ add selected to session</button>
-        <button class="y2k-btn" onclick="closeModalAndResume('todo-overlay')">close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Account Modal -->
+<!-- ACCOUNT MODAL -->
 <div id="modal-account" class="modal-overlay hidden">
   <div class="win-window modal-win">
     <div class="win-titlebar">
-      <span class="win-title-text">👤 account</span>
-      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-account')">✕</div></div>
+      <span class="win-title-text">ACCOUNT</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-account')">x</div></div>
     </div>
     <div class="win-body modal-body" id="account-modal-body">
       <!-- rendered by JS -->
@@ -436,7 +158,204 @@
   </div>
 </div>
 
-<!-- Confetti -->
+<!-- SESSION SETUP MODAL -->
+<div id="modal-setup" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">NEW SESSION</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-setup')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <div class="time-row">
+        <div class="field-group small">
+          <label class="y2k-label">FOCUS (min)</label>
+          <input type="number" id="setup-focus" class="y2k-input small" value="25" min="1" max="120"/>
+        </div>
+        <div class="field-group small">
+          <label class="y2k-label">BREAK (min)</label>
+          <input type="number" id="setup-break" class="y2k-input small" value="5" min="1" max="60"/>
+        </div>
+        <div class="field-group small">
+          <label class="y2k-label">TOTAL (min)</label>
+          <input type="number" id="setup-total" class="y2k-input small" value="120" min="1" max="480"/>
+        </div>
+      </div>
+      <label class="y2k-checkbox-label">
+        <input type="checkbox" id="setup-show-overall" checked/>
+        <span class="checkbox-box"></span>
+        Show overall timer
+      </label>
+      <div class="modal-btns">
+        <button class="y2k-btn filled-pink large" onclick="startSession()">START SESSION</button>
+        <button class="y2k-btn" onclick="closeModalAndResume('modal-setup')">cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FISH REVEAL MODAL -->
+<div id="modal-fish-reveal" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">NEW FISH!</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-fish-reveal')">x</div></div>
+    </div>
+    <div class="win-body modal-body" style="align-items:center;text-align:center">
+      <div id="reveal-fish-img" style="margin:8px auto"></div>
+      <div class="reveal-fish-name" id="reveal-fish-name"></div>
+      <div id="reveal-fish-rarity" class="dex-rarity" style="margin:4px auto"></div>
+      <div class="hint-text" id="reveal-fish-desc" style="margin-top:4px"></div>
+      <button class="y2k-btn filled-pink" onclick="closeModalAndResume('modal-fish-reveal')" style="margin-top:8px">lets go!</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME FISH MODAL -->
+<div id="modal-name-fish" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">NAME YOUR FISH</span>
+      <div class="win-controls"><div class="win-btn" onclick="skipNaming()">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <p class="modal-msg" id="name-fish-label">Your fish is fully grown! Give it a nickname:</p>
+      <div class="field-group">
+        <label class="y2k-label">NICKNAME</label>
+        <input type="text" id="name-fish-input" class="y2k-input" placeholder="what will you call it?"/>
+      </div>
+      <div class="modal-btns">
+        <button class="y2k-btn filled-pink" onclick="saveCustomFishName()">save name</button>
+        <button class="y2k-btn" onclick="skipNaming()">skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TODO MODAL -->
+<div id="modal-todo" class="modal-overlay hidden">
+  <div class="win-window modal-win wide">
+    <div class="win-titlebar">
+      <span class="win-title-text">TASK BOARD</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-todo')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <!-- Add task inline -->
+      <div class="todo-add-row">
+        <input type="text" class="y2k-input" id="todo-modal-task-name" placeholder="new task name..."/>
+        <input type="date" class="y2k-input small" id="todo-modal-due"/>
+        <select class="y2k-input small" id="todo-modal-priority">
+          <option value="high">high</option>
+          <option value="medium" selected>medium</option>
+          <option value="low">low</option>
+        </select>
+        <button class="y2k-btn small filled-pink" onclick="todoModalAddTask()">+ add</button>
+      </div>
+      <!-- Sort / Filter -->
+      <div class="todo-controls-row">
+        <span class="y2k-label">SORT:</span>
+        <button class="y2k-btn tiny" onclick="sortTodoModal('priority')">priority</button>
+        <button class="y2k-btn tiny" onclick="sortTodoModal('due')">due date</button>
+        <button class="y2k-btn tiny" onclick="sortTodoModal('status')">status</button>
+        <span class="y2k-label" style="margin-left:8px">FILTER:</span>
+        <button class="y2k-btn tiny" onclick="filterTodoModal('all')">all</button>
+        <button class="y2k-btn tiny" onclick="filterTodoModal('not-started')">new</button>
+        <button class="y2k-btn tiny" onclick="filterTodoModal('in-progress')">active</button>
+        <button class="y2k-btn tiny" onclick="filterTodoModal('complete')">done</button>
+        <button class="y2k-btn tiny" onclick="filterTodoModal('skipped')">skipped</button>
+      </div>
+      <div class="todo-modal-list" id="todo-modal-list"></div>
+      <button class="y2k-btn" onclick="closeModalAndResume('modal-todo')">close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK PICKER MODAL -->
+<div id="modal-task-picker" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">ADD FROM LIST</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-task-picker')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <p class="hint-text">Click a task to add it to the current slot:</p>
+      <div class="task-picker-list" id="task-picker-list"></div>
+      <button class="y2k-btn" onclick="closeModalAndResume('modal-task-picker')">close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FISH DEX MODAL -->
+<div id="modal-fish-dex" class="modal-overlay hidden">
+  <div class="win-window modal-win wide">
+    <div class="win-titlebar">
+      <span class="win-title-text">FISH DEX</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-fish-dex')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <p class="hint-text">Collect fish by completing sessions! Locked fish shown as ???</p>
+      <div class="dex-grid" id="dex-grid"></div>
+      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-fish-dex')">close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="modal-settings" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">SETTINGS</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-settings')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <div class="field-group">
+        <label class="y2k-label">BACKGROUND COLOUR</label>
+        <div class="bg-swatches" id="bg-swatches">
+          <div class="bg-swatch active" data-colour="#f2dede" style="background:#f2dede" onclick="setBg('#f2dede')" title="Rose Blush"></div>
+          <div class="bg-swatch" data-colour="#ffa3a3" style="background:#ffa3a3" onclick="setBg('#ffa3a3')" title="Coral Pink"></div>
+          <div class="bg-swatch" data-colour="#fbcea0" style="background:#fbcea0" onclick="setBg('#fbcea0')" title="Peach Sorbet"></div>
+          <div class="bg-swatch" data-colour="#b5eeb9" style="background:#b5eeb9" onclick="setBg('#b5eeb9')" title="Mint Leaf"></div>
+          <div class="bg-swatch" data-colour="#addfee" style="background:#addfee" onclick="setBg('#addfee')" title="Sky Blue"></div>
+          <div class="bg-swatch" data-colour="#d2afea" style="background:#d2afea" onclick="setBg('#d2afea')" title="Lavender"></div>
+          <div class="bg-swatch" data-colour="#9877a2" style="background:#9877a2" onclick="setBg('#9877a2')" title="Deep Mauve"></div>
+          <div class="bg-swatch" data-colour="#8499c1" style="background:#8499c1" onclick="setBg('#8499c1')" title="Steel Blue"></div>
+          <div class="bg-swatch" data-colour="#d990a3" style="background:#d990a3" onclick="setBg('#d990a3')" title="Dusty Rose"></div>
+          <div class="bg-swatch" data-colour="#96c8c5" style="background:#96c8c5" onclick="setBg('#96c8c5')" title="Seafoam"></div>
+        </div>
+      </div>
+      <button class="y2k-btn pink" onclick="closeModalAndResume('modal-settings')">close</button>
+    </div>
+  </div>
+</div>
+
+<!-- INCOMPLETE TASK MODAL -->
+<div id="modal-incomplete-task" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">SLOT ENDED</span>
+      <div class="win-controls"><div class="win-btn">-</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <p class="modal-msg" id="incomplete-task-msg"></p>
+      <div id="incomplete-task-options" class="modal-btns col"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TANK MANAGE MODAL -->
+<div id="modal-tank-manage" class="modal-overlay hidden">
+  <div class="win-window modal-win">
+    <div class="win-titlebar">
+      <span class="win-title-text">MANAGE TANK</span>
+      <div class="win-controls"><div class="win-btn" onclick="closeModalAndResume('modal-tank-manage')">x</div></div>
+    </div>
+    <div class="win-body modal-body">
+      <div class="tank-manage-list" id="tank-manage-list"></div>
+      <button class="y2k-btn" onclick="closeModalAndResume('modal-tank-manage')">done</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
 <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 
 <script src="app.js"></script>
