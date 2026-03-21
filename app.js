@@ -57,6 +57,7 @@ let state = {
   bgColour: '#f2dede',
   incompleteQueue: [],
   draggedTaskId: null,
+  notes: [],
 };
 
 // ===================== PERSISTENCE =====================
@@ -66,7 +67,7 @@ function saveToStorage() {
     todos:state.todos, tankFish:state.tankFish, cryoFish:state.cryoFish,
     fishStage:state.fishStage, fishCustomName:state.fishCustomName,
     currentFish:state.currentFish, collectedFish:state.collectedFish,
-    skippedTasks:state.skippedTasks, bgColour:state.bgColour,
+    skippedTasks:state.skippedTasks, bgColour:state.bgColour, notes:state.notes,
   }));
 }
 function loadFromStorage() {
@@ -79,7 +80,7 @@ function loadFromStorage() {
       todos:d.todos||[], tankFish:d.tankFish||[], cryoFish:d.cryoFish||[],
       fishStage:d.fishStage||0, fishCustomName:d.fishCustomName||null,
       currentFish:d.currentFish||null, collectedFish:d.collectedFish||[],
-      skippedTasks:d.skippedTasks||[], bgColour:d.bgColour||'#f2dede',
+      skippedTasks:d.skippedTasks||[], bgColour:d.bgColour||'#f2dede', notes:d.notes||[],
     });
   } catch(e) {}
 }
@@ -245,12 +246,15 @@ function startSession() {
   state.isPaused=false; state.sessionActive=true;
   state.overallSecondsLeft=total*60;
   state.slotSecondsLeft=focus*60; state.focusTotalSecs=focus*60;
-  if(!state.currentFish||state.fishStage>=3){
+  // Only roll new fish if no fish growing currently
+  const isNewFish = !state.currentFish || state.fishStage>=3;
+  if(isNewFish){
     state.currentFish=rollFish(); state.fishStage=0; state.fishCustomName=null;
   }
   closeModal('modal-setup'); resumeAfterModal();
   renderAll(); startTimer(); saveToStorage();
-  showRarityReveal(state.currentFish);
+  // Only show rarity reveal when it's a brand new fish
+  if(isNewFish) showRarityReveal(state.currentFish);
 }
 
 function showRarityReveal(fish) {
@@ -312,7 +316,12 @@ function onPhaseEnd() {
   if(!state.slots[state.currentSlotIndex]) return;
   const slot=state.slots[state.currentSlotIndex];
   if(state.isFocusPhase){
-    if(state.fishStage<3){ state.fishStage++; renderTank(); if(state.fishStage===3) promptNameFish(); }
+    if(state.fishStage<3){
+      state.fishStage++;
+      renderTank();
+      // Only prompt naming when fish reaches stage 3 (fully grown)
+      if(state.fishStage===3) promptNameFish();
+    }
     const incomplete=slot.tasks.filter(t=>!t.completed);
     if(incomplete.length>0){state.incompleteQueue=[...incomplete];showIncompletePrompt();}
     state.isFocusPhase=false; slot.status='break';
@@ -364,7 +373,7 @@ function resetTimerUI() {
 function renderAll() {
   updateTrainerChip(); updateTimerUI(); updateTimerModeUI();
   renderSlotsOverview(); renderCurrentSlotTasks();
-  renderTank(); renderSavedFishRow(); renderSkippedBox();
+  renderTank(); renderSavedFishRow(); renderSkippedBox(); renderNotes();
   const or=document.getElementById('overall-timer-row');
   if(or) or.style.display=state.showOverall?'flex':'none';
   document.body.style.background=state.bgColour;
@@ -503,17 +512,40 @@ function editSkipNote(i) {
 // ===================== FISH TANK =====================
 function renderTank() {
   const tank=document.getElementById('fish-tank'); if(!tank) return;
-  tank.querySelectorAll('.fish-main').forEach(e=>e.remove());
-  if(!state.currentFish) return;
-  const wrapper=document.createElement('div');
-  wrapper.className='fish-main';
-  wrapper.innerHTML=fishStageImg(state.currentFish,state.fishStage,80);
-  tank.appendChild(wrapper);
-  const displayName=state.fishCustomName||state.currentFish.name;
+  // Remove old fish elements
+  tank.querySelectorAll('.fish-main,.fish-swimmer').forEach(e=>e.remove());
+
+  // Show all fully grown tank fish swimming around
+  state.tankFish.forEach((entry,i)=>{
+    const swimmer=document.createElement('div');
+    swimmer.className='fish-swimmer';
+    // Vary speed, vertical position, delay per fish
+    const duration = 8 + (i*1.3)%7;
+    const yPos     = 15 + (i*17)%55;
+    const delay    = -(i*1.7)%duration;
+    swimmer.style.cssText=`top:${yPos}%;animation-duration:${duration}s;animation-delay:${delay}s`;
+    swimmer.innerHTML=`<img src="fishdex/${entry.fish.id}.png" alt="${entry.fish.id}" class="pixel-img tank-fish-sprite" style="width:32px;height:32px"/>`;
+    tank.appendChild(swimmer);
+  });
+
+  // Show current growing fish (egg or growing stages)
+  if(state.currentFish){
+    const wrapper=document.createElement('div');
+    wrapper.className='fish-main';
+    wrapper.innerHTML=fishStageImg(state.currentFish,state.fishStage,72);
+    tank.appendChild(wrapper);
+  }
+
+  // Update status text
+  const displayName=state.fishCustomName||state.currentFish?.name||'';
   const ts=document.getElementById('tama-status');
-  if(ts) ts.textContent=state.fishStage<3?`${displayName} growing... (${state.fishStage+1}/4)`:`${displayName} is fully grown!`;
+  if(ts){
+    if(!state.currentFish) ts.textContent='start a session to grow your fish!';
+    else if(state.fishStage<3) ts.textContent=`${displayName} growing... (stage ${state.fishStage+1}/4)`;
+    else ts.textContent=`${displayName} is fully grown!`;
+  }
   const nd=document.getElementById('tama-name-display');
-  if(nd) nd.textContent=displayName;
+  if(nd) nd.textContent=displayName||'FISH TANK';
 }
 
 function flashTankGlow() {
@@ -536,14 +568,20 @@ function saveCustomFishName() {
   const input=document.getElementById('name-fish-input');
   state.fishCustomName=input.value.trim()||state.currentFish.name;
   addFishToTank(state.currentFish,state.fishCustomName);
+  // Spawn new egg immediately
+  state.currentFish=rollFish(); state.fishStage=0; state.fishCustomName=null;
   closeModalAndResume('modal-name-fish');
   renderTank(); renderSavedFishRow(); saveToStorage();
+  showRarityReveal(state.currentFish);
 }
 function skipNaming() {
-  state.fishCustomName=state.currentFish.name;
-  addFishToTank(state.currentFish,state.fishCustomName);
+  const name=state.currentFish.name;
+  addFishToTank(state.currentFish,name);
+  // Spawn new egg immediately
+  state.currentFish=rollFish(); state.fishStage=0; state.fishCustomName=null;
   closeModalAndResume('modal-name-fish');
   renderTank(); renderSavedFishRow(); saveToStorage();
+  showRarityReveal(state.currentFish);
 }
 
 // ===================== TANK COLLECTION =====================
@@ -610,13 +648,25 @@ function reAdoptCryo(i){
 
 function renderSavedFishRow() {
   const row=document.getElementById('saved-pets-row'); if(!row) return;
-  row.innerHTML=state.tankFish.slice(0,25).map(f=>`
+  // Tank fish row
+  let html=state.tankFish.slice(0,25).map(f=>`
     <div class="saved-fish-item" title="${f.customName} (${f.fish.rarity})">
-      ${fishImg(f.fish.id,24)}
+      <img src="fishdex/${f.fish.id}.png" alt="${f.fish.id}" class="pixel-img" style="width:24px;height:24px"/>
       <span class="saved-fish-name">${f.customName}</span>
     </div>`).join('');
-  if(state.cryoFish.length>0)
-    row.innerHTML+=`<div class="cryo-badge" onclick="openTankFullModal()">[CRYO: ${state.cryoFish.length}]</div>`;
+  // Cryo section below if any
+  if(state.cryoFish.length>0){
+    html+=`<div class="cryo-row">
+      <div class="cryo-row-label">CRYO STORAGE (${state.cryoFish.length})</div>
+      ${state.cryoFish.map(f=>`
+        <div class="saved-fish-item" title="${f.customName} [cryo]" style="opacity:0.6;border-color:var(--blue)">
+          <img src="fishdex/${f.fish.id}.png" alt="${f.fish.id}" class="pixel-img" style="width:24px;height:24px;filter:grayscale(0.5)"/>
+          <span class="saved-fish-name">${f.customName}</span>
+        </div>`).join('')}
+      <button class="cryo-badge" onclick="openTankFullModal()">manage</button>
+    </div>`;
+  }
+  row.innerHTML=html;
 }
 
 // ===================== FISH DEX =====================
@@ -744,6 +794,28 @@ function openEditStatus(id){
   if(c&&statuses.includes(c)){t.status=c;if(c==='complete')t.completed=true;renderTodoList();saveToStorage();}
 }
 
+// ===================== NOTES =====================
+function addNote() {
+  const input=document.getElementById('note-input');
+  const text=input.value.trim(); if(!text) return;
+  state.notes.push({id:'note_'+Date.now(), text});
+  input.value=''; renderNotes(); saveToStorage();
+}
+function deleteNote(id) {
+  state.notes=state.notes.filter(n=>n.id!==id);
+  renderNotes(); saveToStorage();
+}
+function renderNotes() {
+  const el=document.getElementById('notes-list'); if(!el) return;
+  el.innerHTML=state.notes.length
+    ? state.notes.map(n=>`
+        <div class="note-item">
+          <span class="note-text">${n.text}</span>
+          <button class="y2k-btn tiny danger" onclick="deleteNote('${n.id}')">x</button>
+        </div>`).join('')
+    : '<p class="hint-text" style="font-size:10px">no notes yet!</p>';
+}
+
 // ===================== SETTINGS =====================
 function openSettings(){ pauseForModal(); openModal('modal-settings'); }
 function setBg(c){
@@ -802,6 +874,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     }
     if(e.code==='Enter'&&document.activeElement.id==='inline-task-input') inlineAddTask();
     if(e.code==='Enter'&&document.activeElement.id==='todo-modal-task-name') todoModalAddTask();
+    if(e.code==='Enter'&&document.activeElement.id==='note-input') addNote();
   });
   const skipZone=document.getElementById('skip-drop-zone');
   if(skipZone){skipZone.addEventListener('dragover',allowDrop);skipZone.addEventListener('drop',dropToSkip);}

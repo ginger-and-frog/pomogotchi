@@ -21,7 +21,7 @@
     <div class="taskbar-center">POMOGOTCHI</div>
     <div class="taskbar-right">
       <button class="img-icon-btn" onclick="openTodoModal()" title="To-Do List">
-        <span class="y2k-label" style="font-size:7px">TODO</span>
+        <img src="assets/todo.png" alt="Todo" class="pixel-img"/>
       </button>
       <button class="img-icon-btn" onclick="openFishDex()" title="Fish Dex">
         <img src="assets/fishDex.png" alt="Fish Dex" class="pixel-img"/>
@@ -82,10 +82,15 @@
             <button class="y2k-btn small" onclick="openAddFromTaskList()">from list</button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- FISH TANK PANEL -->
+        <!-- Notes section -->
+        <div class="notes-box">
+          <div class="slot-tasks-title">NOTES</div>
+          <div id="notes-list"></div>
+          <div class="inline-add-task" style="margin-top:6px">
+            <input type="text" class="y2k-input" id="note-input" placeholder="jot something down..."/>
+            <button class="y2k-btn small pink" onclick="addNote()">+</button>
+          </div>
+        </div>
     <div class="win-window tank-win">
       <div class="win-titlebar">
         <span class="win-title-text" id="tama-name-display">FISH TANK</span>

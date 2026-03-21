@@ -67,9 +67,7 @@ html, body {
 .taskbar-left, .taskbar-right { display: flex; align-items: center; gap: 6px; }
 .taskbar-center {
   font-family: var(--font-pixel); font-size: 10px;
-  background: var(--win-title);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--purple-deep);
   letter-spacing: 2px;
 }
 .trainer-chip {
@@ -105,7 +103,7 @@ html, body {
   overflow: hidden; display: flex; flex-direction: column;
 }
 .win-titlebar {
-  background: var(--win-title);
+  background: var(--purple-deep);
   padding: 5px 10px;
   display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
@@ -198,18 +196,13 @@ select.y2k-input { cursor: url('assets/cursor.png') 0 0, pointer; }
 
 .timer-display {
   text-align:center; font-family:var(--font-pixel); font-size:28px;
-  background:var(--win-title);
-  -webkit-background-clip:text; background-clip:text;
-  -webkit-text-fill-color:transparent;
+  color: var(--purple-deep);
   letter-spacing:2px;
   animation: timerPulse 1s ease-in-out infinite;
 }
 @keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:0.75} }
 .timer-display.paused { animation:none; opacity:0.4; }
-.timer-display.break-mode {
-  background: linear-gradient(90deg, var(--mint-deep), var(--blue-deep));
-  -webkit-background-clip:text; background-clip:text;
-}
+.timer-display.break-mode { color: var(--mint-deep); }
 
 .progress-wrap { height:8px; background:var(--purple-light); border-radius:4px; border:1.5px solid var(--purple); overflow:hidden; }
 .progress-fill { height:100%; background:linear-gradient(90deg,var(--purple-deep),var(--pink-deep)); border-radius:3px; transition:width 0.5s linear; }
@@ -500,7 +493,40 @@ select.y2k-input { cursor: url('assets/cursor.png') 0 0, pointer; }
 .tank-manage-item .pixel-img { width:28px; height:28px; flex-shrink:0; }
 .tank-manage-name { flex:1; font-size:11px; font-weight:700; color:var(--text-dark); }
 
-/* ===================== CONFETTI ===================== */
+/* Swimming tank fish */
+.fish-swimmer {
+  position:absolute; z-index:4;
+  animation: fishSwimAcross linear infinite;
+}
+@keyframes fishSwimAcross {
+  0%   { left:-40px; transform:scaleX(1); }
+  49%  { left:calc(100% + 10px); transform:scaleX(1); }
+  50%  { left:calc(100% + 10px); transform:scaleX(-1); }
+  99%  { left:-40px; transform:scaleX(-1); }
+  100% { left:-40px; transform:scaleX(1); }
+}
+.fish-swimmer .pixel-img { width:32px; height:32px; display:block; }
+
+/* Notes box */
+.notes-box {
+  background: var(--yellow);
+  border:1.5px solid var(--yellow-deep);
+  border-radius:8px; padding:10px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.note-item {
+  display:flex; align-items:flex-start; gap:8px;
+  background:white; border-radius:6px; padding:6px 8px;
+  border:1.5px solid var(--yellow-deep);
+}
+.note-text { flex:1; font-size:11px; font-weight:700; color:var(--text-dark); line-height:1.4; word-break:break-word; }
+
+/* Cryo row below saved fish */
+.cryo-row {
+  display:flex; flex-wrap:wrap; gap:4px; align-items:center;
+  padding:6px 0; border-top:1px dashed var(--blue-light); margin-top:4px;
+}
+.cryo-row-label { font-family:var(--font-pixel); font-size:6px; color:var(--blue-deep); width:100%; margin-bottom:2px; }
 .confetti-canvas { position:fixed; inset:0; z-index:9999; pointer-events:none; }
 
 /* ===================== SCROLLBAR ===================== */
