@@ -520,7 +520,7 @@ function renderTank() {
     const swimmer=document.createElement('div');
     swimmer.className='fish-swimmer';
     // Vary speed, vertical position, delay per fish
-    const duration = 8 + (i*1.3)%7;
+    const duration = 18 + (i*1.3)%7;
     const yPos     = 15 + (i*17)%55;
     const delay    = -(i*1.7)%duration;
     swimmer.style.cssText=`top:${yPos}%;animation-duration:${duration}s;animation-delay:${delay}s`;
