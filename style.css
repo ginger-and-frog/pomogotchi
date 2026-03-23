@@ -262,7 +262,7 @@ select.y2k-input { cursor: url('assets/cursor.png') 0 0, pointer; }
 .tank-body { display:flex; flex-direction:column; gap:8px; padding:10px; overflow:hidden; }
 
 .fish-tank {
-  flex:1; min-height:0; max-height:220px;
+  flex:1; min-height:0; max-height:500px;
   background: #d4f0ff;
   border:2px solid var(--blue-deep);
   border-radius:10px;
