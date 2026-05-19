@@ -1,5 +1,5 @@
 # a little background 🗣️
-Pomogatchi is derives from pomodoro (timer) and tamagotchi (game), and this is exactly what the deployment is. <br/>
+Pomogatchi is derived from pomodoro (timer) and tamagotchi (game), and this is exactly what the deployment is. <br/>
 > https://ginger-and-frog.github.io/pomogotchi/ <br/>
 
 
